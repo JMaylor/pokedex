@@ -41,7 +41,7 @@
 					</div>
 					<hr />
 					<h3>Types</h3>
-					<div>
+					<!-- <div>
 						<h3>
 							<b-badge
 								pill
@@ -52,7 +52,7 @@
 								:class="pokemonType.type.name"
 							>{{ capitalize(pokemonType.type.name) }}</b-badge>
 						</h3>
-					</div>
+					</div>-->
 					<div
 						class="icon"
 						v-for="pokemonType in pokemon.types"
@@ -66,12 +66,37 @@
 					</div>
 				</b-col>
 			</b-row>
-			<hr>
-			<b-row>
-				Evolution Chain - Coming Soon
+			<hr />
+			<b-row class="justify-content-center">
+				<h4>Evolution Chain</h4>
 			</b-row>
-			<b-row>
-				<span v-for="pokemonGen1 in Object.keys(evoChain)" :key="pokemonGen1">{{ pokemonGen1 }}</span>
+			<b-row class="justify-content-center text-center">
+				<b-img
+					v-if="evoChain"
+					:src="`https://assets.pokemon.com/assets/cms2/img/pokedex/detail/${getPokemonID(Object.keys(evoChain)[0])}.png`"
+				></b-img>
+			</b-row>
+			<b-row class="justify-content-center">
+				<b-icon icon="arrow-down" scale="3"></b-icon>
+			</b-row>
+			<b-row class="justify-content-center text-center">
+				<b-col
+					cols="auto"
+					v-for="pokemonGen2 in Object.keys(evoChain[Object.keys(evoChain)[0]])"
+					:key="pokemonGen2"
+				>
+					<b-img
+						class="mx-auto"
+						:src="`https://assets.pokemon.com/assets/cms2/img/pokedex/detail/${getPokemonID(pokemonGen2)}.png`"
+					></b-img>
+					<br />
+					<div v-for="pokemonGen3 in evoChain[Object.keys(evoChain)[0]][pokemonGen2]" :key="pokemonGen3">
+						<b-icon icon="arrow-down" scale="3"></b-icon><br>
+						<b-img
+							:src="`https://assets.pokemon.com/assets/cms2/img/pokedex/detail/${getPokemonID(pokemonGen3)}.png`"
+						></b-img>
+					</div>
+				</b-col>
 			</b-row>
 		</b-container>
 	</b-modal>
@@ -110,6 +135,14 @@
 					word => word.substring(0, 1).toUpperCase() + word.substring(1)
 				);
 				return capitalizedWords.join(" ");
+			},
+			getPokemonID(pokemonName) {
+				return this.getLongID(
+					this.$store.state.fullPokemonList
+						.find(x => x.name == pokemonName)
+						.url.split("/")
+						.slice(-2)[0]
+				);
 			}
 		},
 		mounted() {

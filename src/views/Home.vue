@@ -1,18 +1,26 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
-  </div>
+	<div>
+		<SearchBar />
+		<PokemonList v-if="$store.state.displayedResults.length > 0" />
+		<PokemonDetailModal v-if="$store.state.detailView" />
+	</div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from "@/components/HelloWorld.vue";
+	// @ is an alias to /src
+	import SearchBar from "@/components/SearchBar";
+	import PokemonList from "@/components/PokemonList";
+	import PokemonDetailModal from "@/components/PokemonDetailModal";
 
-export default {
-  name: "Home",
-  components: {
-    HelloWorld
-  }
-};
+	export default {
+		components: {
+			SearchBar,
+			PokemonList,
+			PokemonDetailModal
+		},
+		mounted() {
+			this.$store.dispatch("getFullPokemonList");
+			this.$store.commit("retrieveFavourites");
+		}
+	};
 </script>

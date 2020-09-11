@@ -124,9 +124,9 @@ export default new Vuex.Store({
         context.commit("addPokemonToResults", pokemonArray)
       );
     },
-    selectPokemon(context, pokemon) {
+    async selectPokemon(context, pokemon) {
+      await context.dispatch("getEvolutionChain", pokemon);
       context.commit("selectPokemon", pokemon);
-      context.dispatch("getEvolutionChain", pokemon);
     },
     async getEvolutionChain(context, pokemon) {
       console.log("getting evolution chain");
@@ -164,6 +164,8 @@ export default new Vuex.Store({
 
       console.log(evoChain);
       context.commit("setEvolutionChain", evoChain);
+
+      return;
     },
   },
   modules: {},

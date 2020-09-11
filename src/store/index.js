@@ -25,6 +25,7 @@ export default new Vuex.Store({
   },
   mutations: {
     retrieveFavourites(state) {
+      console.log("retrieveFavourites");
       if (localStorage.getItem("favourites") === null) {
         localStorage.setItem("favourites", JSON.stringify([]));
       }
@@ -53,16 +54,10 @@ export default new Vuex.Store({
     searchPokemon(state) {
       state.searchResults = state.fullPokemonList.filter(
         (x) =>
-          x.name.includes(state.searchQuery) ||
-          x.url
-            .split("/")
-            .slice(-2)[0]
-            .includes(state.searchQuery)
+          x.name.includes(state.searchQuery) || x.id.toString().includes(state.searchQuery)
       );
     },
     filterByFavourites(state) {
-      console.log(state.fullPokemonList);
-      console.log("filtering by favourites");
       state.searchResults = [];
       state.searchResults = state.fullPokemonList.filter(
         (x) => state.favourites.indexOf(x.name) > -1
@@ -85,15 +80,47 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    getFullPokemonList(context) {
-      fetch("https://pokeapi.co/api/v2/pokemon?limit=893")
+    async getFullPokemonList(context) {
+      console.log("getting all pokemon");
+      await fetch("https://pokeapi.co/api/v2/pokemon?limit=893")
         .then((response) => response.json())
         .then((result) => {
-          context.commit("setFullPokemonList", result.results);
-          context.dispatch("favouriteSearch");
+          Promise.all(
+            result.results.map((x) =>
+              fetch(x.url).then(async (response) => {
+                const jsonResponse = await response.json();
+                // here don't save ALL the information as the response is simply too long
+                return (({
+                  abilities,
+                  height,
+                  id,
+                  name,
+                  species,
+                  stats,
+                  types,
+                  weight,
+                }) => ({
+                  abilities,
+                  height,
+                  id,
+                  name,
+                  species,
+                  stats,
+                  types,
+                  weight,
+                }))(jsonResponse);
+              })
+            )
+          ).then((pokemonArray) => {
+            context.commit("setFullPokemonList", pokemonArray);
+			console.log("all pokemon now stored");
+			context.commit("retrieveFavourites");
+			context.dispatch("favouriteSearch");
+          });
         });
     },
     favouriteSearch(context) {
+      console.log("favouriteSearch");
       context.commit("filterByFavourites");
       context.dispatch("loadResults");
     },
@@ -104,32 +131,18 @@ export default new Vuex.Store({
       context.dispatch("loadResults");
     },
     loadResults(context) {
-      // find how many total results there are
-      //   const totalResultsCount = context.state.totalResults.length;
-      // find how many are currently loaded
       const pokemonAlreadyLoaded = context.getters.getDisplayedResultsLength;
-      console.log("already loaded", pokemonAlreadyLoaded);
-
-      const urlsToFetch = context.state.searchResults.slice(
+      const pokemonToLoad = context.state.searchResults.slice(
         pokemonAlreadyLoaded,
         pokemonAlreadyLoaded + context.state.resultsPerPage
       );
-      console.log(urlsToFetch);
-      // load the next x
-      Promise.all(
-        urlsToFetch.map((result) =>
-          fetch(result.url).then((response) => response.json())
-        )
-      ).then((pokemonArray) =>
-        context.commit("addPokemonToResults", pokemonArray)
-      );
+      context.commit("addPokemonToResults", pokemonToLoad);
     },
     async selectPokemon(context, pokemon) {
       await context.dispatch("getEvolutionChain", pokemon);
       context.commit("selectPokemon", pokemon);
     },
     async getEvolutionChain(context, pokemon) {
-      console.log("getting evolution chain");
       // go to species URL and get evolution_chain url
       const speciesURL = pokemon.species.url;
       const speciesData = await fetch(speciesURL).then((response) =>
@@ -140,7 +153,6 @@ export default new Vuex.Store({
       const evolutionData = await fetch(
         speciesData.evolution_chain.url
       ).then((response) => response.json().then((data) => data.chain));
-      console.log(evolutionData);
 
       // initalise empty evoChain
       const evoChain = {};
@@ -162,7 +174,6 @@ export default new Vuex.Store({
         ] = secondGen.evolves_to.map((x) => x.species.name);
       });
 
-      console.log(evoChain);
       context.commit("setEvolutionChain", evoChain);
 
       return;

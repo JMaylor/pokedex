@@ -20,7 +20,6 @@
 		},
 		mounted() {
 			this.$store.dispatch("getFullPokemonList");
-			this.$store.commit("retrieveFavourites");
 		}
 	};
 </script>

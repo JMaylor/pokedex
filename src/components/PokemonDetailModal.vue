@@ -91,7 +91,8 @@
 					></b-img>
 					<br />
 					<div v-for="pokemonGen3 in evoChain[Object.keys(evoChain)[0]][pokemonGen2]" :key="pokemonGen3">
-						<b-icon icon="arrow-down" scale="3"></b-icon><br>
+						<b-icon icon="arrow-down" scale="3"></b-icon>
+						<br />
 						<b-img
 							:src="`https://assets.pokemon.com/assets/cms2/img/pokedex/detail/${getPokemonID(pokemonGen3)}.png`"
 						></b-img>
@@ -138,10 +139,9 @@
 			},
 			getPokemonID(pokemonName) {
 				return this.getLongID(
-					this.$store.state.fullPokemonList
-						.find(x => x.name == pokemonName)
-						.url.split("/")
-						.slice(-2)[0]
+					this.$store.state.fullPokemonList.find(
+						x => x.name == pokemonName
+					).id
 				);
 			}
 		},

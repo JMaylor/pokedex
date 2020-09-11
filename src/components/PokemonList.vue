@@ -21,6 +21,7 @@
 					:variant="$store.state.searchResults.length > $store.state.displayedResults.length ? 'success' : 'warning'"
 					:disabled="$store.state.searchResults.length <= $store.state.displayedResults.length"
 					@click="$store.dispatch('loadResults')"
+					class="mb-3"
 				>{{ $store.state.searchResults.length > $store.state.displayedResults.length ? 'Load more' : 'No more results' }}</b-button>
 			</b-col>
 		</b-row>

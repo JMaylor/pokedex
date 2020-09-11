@@ -25,6 +25,9 @@ export default new Vuex.Store({
   },
   mutations: {
     retrieveFavourites(state) {
+      if (localStorage.getItem("favourites") === null) {
+        localStorage.setItem("favourites", JSON.stringify([]));
+      }
       state.favourites = JSON.parse(localStorage.getItem("favourites"));
     },
     toggleFavourite(state, pokemon) {

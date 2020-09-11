@@ -16,7 +16,7 @@
 					</b-input-group>
 				</b-form>
 			</b-col>
-			<b-col cols="12" lg="6">
+			<b-col cols="12" lg="6" class="text-left mb-2">
 				<b-card
 					bg-variant="success"
 					text-variant="white"
@@ -25,8 +25,7 @@
 			</b-col>
 		</b-row>
 		<b-row>
-			<b-col cols="12" lg="6">
-			</b-col>
+			<b-col cols="12" lg="6"></b-col>
 			<b-col cols="12" lg="6" class="mb-2 d-flex justify-content-around">
 				<b-button variant="info" @click="viewAll">View All</b-button>
 				<b-button variant="warning" @click="viewFavourites">View Favourites</b-button>
@@ -51,14 +50,14 @@
 				this.$store.dispatch("newSearch", this.query);
 			},
 			viewAll() {
-				this.query = '';
+				this.query = "";
 				this.search();
 			},
 			viewFavourites() {
 				this.$store.commit("resetSearchResults");
-				this.$store.dispatch("favouriteSearch")
+				this.$store.dispatch("favouriteSearch");
 			}
-		},
+		}
 	};
 </script>
 

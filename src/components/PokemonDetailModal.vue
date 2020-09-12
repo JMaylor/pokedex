@@ -6,6 +6,7 @@
 		@hidden="$store.commit('hideDetailModal')"
 		header-class="text-center"
 		title-class="w-100 display-4"
+		ok-only
 	>
 		<template v-slot:modal-title class="w-100 text-center">
 			{{ capitalize(pokemon.name) }}
@@ -41,18 +42,6 @@
 					</div>
 					<hr />
 					<h3>Types</h3>
-					<!-- <div>
-						<h3>
-							<b-badge
-								pill
-								v-for="pokemonType in pokemon.types"
-								:key="pokemonType.type.name"
-								variant="none"
-								class="mr-2"
-								:class="pokemonType.type.name"
-							>{{ capitalize(pokemonType.type.name) }}</b-badge>
-						</h3>
-					</div>-->
 					<div
 						class="icon"
 						v-for="pokemonType in pokemon.types"

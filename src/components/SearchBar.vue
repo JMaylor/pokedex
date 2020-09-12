@@ -7,9 +7,9 @@
 				<label class="text-white mb-0">Name or Number</label>
 				<b-form @submit.prevent="search">
 					<b-input-group class="mt-3">
-						<b-form-input v-model="query"></b-form-input>
+						<b-form-input v-model="query" :disabled="$store.state.loading"></b-form-input>
 						<b-input-group-append>
-							<b-button variant="info" @click="search">
+							<b-button variant="info" @click="search" :disabled="$store.state.loading">
 								<b-icon icon="search"></b-icon>
 							</b-button>
 						</b-input-group-append>
@@ -27,8 +27,8 @@
 		<b-row>
 			<b-col cols="12" lg="6"></b-col>
 			<b-col cols="12" lg="6" class="mb-2 d-flex justify-content-around">
-				<b-button variant="info" @click="viewAll">View All</b-button>
-				<b-button variant="warning" @click="viewFavourites">View Favourites</b-button>
+				<b-button variant="info" @click="viewAll" :disabled="$store.state.loading">View All</b-button>
+				<b-button variant="warning" @click="viewFavourites" :disabled="$store.state.loading">View Favourites</b-button>
 			</b-col>
 		</b-row>
 	</b-jumbotron>

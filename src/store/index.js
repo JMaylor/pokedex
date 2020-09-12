@@ -5,6 +5,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
+    loading: true,
     fullPokemonList: [],
     searchQuery: "",
     searchResults: [],
@@ -24,6 +25,12 @@ export default new Vuex.Store({
     },
   },
   mutations: {
+    setLoadingTrue(state) {
+      state.loading = true;
+    },
+    setLoadingFalse(state) {
+      state.loading = false;
+    },
     retrieveFavourites(state) {
       console.log("retrieveFavourites");
       if (localStorage.getItem("favourites") === null) {
@@ -54,7 +61,8 @@ export default new Vuex.Store({
     searchPokemon(state) {
       state.searchResults = state.fullPokemonList.filter(
         (x) =>
-          x.name.includes(state.searchQuery) || x.id.toString().includes(state.searchQuery)
+          x.name.includes(state.searchQuery) ||
+          x.id.toString().includes(state.searchQuery)
       );
     },
     filterByFavourites(state) {
@@ -113,9 +121,14 @@ export default new Vuex.Store({
             )
           ).then((pokemonArray) => {
             context.commit("setFullPokemonList", pokemonArray);
-			console.log("all pokemon now stored");
-			context.commit("retrieveFavourites");
-			context.dispatch("favouriteSearch");
+            console.log("all pokemon now stored");
+            context.commit("retrieveFavourites");
+            if (context.state.favourites.length == 0) {
+              context.dispatch("newSearch", "");
+            } else {
+              context.dispatch("favouriteSearch");
+            }
+            context.commit("setLoadingFalse");
           });
         });
     },
